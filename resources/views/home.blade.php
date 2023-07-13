@@ -23,7 +23,7 @@
           <a class="nav-link" href="#">Features</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Pricing</a>
+          <a class="nav-link" href="#">Pricing2</a>
         </li>
         <li class="nav-item">
           <a class="nav-link disabled">Disabled</a>
