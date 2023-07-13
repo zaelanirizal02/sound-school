@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\BukuController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('home',[HomeController::class, 'index']);
 Route::resource('/posts', \App\Http\Controllers\PostController::class);
 
 Route::get('buku',[BukuController::class, 'index']);
