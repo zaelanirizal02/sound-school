@@ -2,138 +2,71 @@
 
 namespace App\Http\Controllers;
 
-//import Model "Post
 use App\Models\Post;
-
-//return type View
-use Illuminate\View\View;
-
-//return type redirectResponse
-use Illuminate\Http\RedirectResponse;
-
 use Illuminate\Http\Request;
-
-//impert facade storage
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Routing\Controller;
+use App\Http\Resources\PostResource;
+use App\Http\Resources\PostDetailResource;
+use GuzzleHttp\Psr7\Response;
+use Illuminate\Auth\Events\Validated;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-    
-    public function index(): View
+    public function index()
     {
-        //get posts
-        $posts = Post::latest()->paginate(5);
-
-        //render view with posts
-        return view('posts.index', compact('posts'));
+        $posts = Post::with('writer:id,username')->get();
+        // return response()->json(['data' => $posts]);
+        return PostDetailResource::collection($posts);
     }
 
-   
- public function create(): View
-    {
-        return view('posts.create');
+    public function show($id)
+    { //penulisan with custom tidak memakai spasi
+
+        $posts = Post::with('writer:id,username')->findOrFail($id);
+
+        // return response()->json(['data' => $posts]);
+        // penulisan jangan pakai collection karena show
+
+        return new PostDetailResource($posts);
     }
 
-  
-    public function store(Request $request): RedirectResponse
+    public function show2($id)
     {
-        //validate form
-        $this->validate($request, [
-            'image'      => 'required|image|mimes:jpeg,jpg,png|max:2048',
-            'title'     => 'required|min:5',
-            'content'    => 'required|min:10'
+        $posts = Post::findOrFail($id);
+        return new PostDetailResource($posts);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|max:255',
+            'news_content' => 'required',
         ]);
 
-        //upload image
-        $image = $request->file('image');
-        $image->storeAs('public/posts', $image->hashName());
-        
-        //create post
-        Post::create([
-            'image'     => $image->hashName(),
-            'title'     => $request->title,
-            'content'   => $request->content
-        ]);
-        
-        //redirect to index
-        return redirect()->route('posts.index')->with(['success' => 'Data Berhasil Disimpan']);
-        
+        $request['author'] = Auth::user()->id;
+        $post = Post::create($request->all());
+        return new PostDetailResource($post->loadMissing('writer:id,username'));
     }
 
-    //show
-    public function show(string $id): View
+    public function update(Request $request, $id)
     {
-        //get post id
+        $validated = $request->validate([
+            'title' => 'required|max:255',
+            'news_content' => 'required',
+        ]);
+
         $post = Post::findOrFail($id);
+        $post->update($request->all());
 
-        //render view with post
-        return view('posts.show', compact('post'));
+        return new PostDetailResource($post->loadMissing('writer:id,username'));
     }
 
-    //edit
-    public function edit(string $id): View
+    public function destroy($id)
     {
-        //get post by ID
         $post = Post::findOrFail($id);
-
-        //render view with post
-        return view('posts.edit', compact('post'));
-    }
-
-    //update
-    public function update(Request $request,$id): RedirectResponse
-    {
-        //validate form
-        $this->validate($request,[
-            'image' => 'image|mimes:jpeg,jpg,png|max:2048',
-            'title' => 'required|min:5',
-            'content' => 'required|min:10'
-        ]);
-
-        //get post by id
-        $post = Post::findOrFail($id);
-
-        //check if image is uploaded
-        if ($request->hasFile('image')){
-
-         //upload new image
-        $image = $request->file('image');
-        $image->storeAs('public/posts', $image->hashName());
-
-        //delete old image
-        Storage::delete('public/posts/'.$post->image);
-
-        //update post with new image
-        $post->update([
-            'image'     => $image->hashName(),
-            'title'     => $request->title,
-            'content'   => $request->content
-        ]);
-    } else {
-        //update without image
-        $post->update([
-            'title'     => $request->title,
-            'content'   => $request->content
-        ]);
-    }
-    //redirect to index
-    return redirect()->route('posts.index')->with(['success' => 'Data Berhasil Diubah!']);
-    }
-
-    //destroy/hapus
-    public function destroy($id): RedirectResponse
-    {
-        //get post ID
-        $post = Post::findOrFail($id);
-
-        //delete image
-        Storage::delete('public/posts/'. $post->image);
-
-        //delete post
         $post->delete();
 
-        //redirect to index
-        return redirect()->route('posts.index')->with(['success' => 'Data Berhasil dihapus']);
+        return new PostDetailResource($post->loadMissing('writer:id,username'));
     }
-    
 }

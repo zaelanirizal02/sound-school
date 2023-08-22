@@ -1,11 +1,12 @@
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>SoundSchool</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>SoundSchool</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 </head>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -33,29 +34,44 @@
   </div>
 </nav>
 
-<body style="background: lightgray">
+<body style="background-color: aquamarine">
+  
 
-    @foreach ($posts as $post)    
-        <div class="container mt-5">
-            <div class="card-body">
-                            <div class="card" style="width: 18rem;">
-                <img src="{{ asset('/storage/posts/'.$post->image) }}" class="card-img-top" alt="...">
-                <div class="card-body">
-                <p class="card-text">{!!$post->content!!} </p>
-                </div>
-                </div>
-            </div>
-        </div>
-        
+  <div class="container">
+    <div class="row">
+  @foreach ($posts as $post)
+  <div class="col-md-4">
+    <div class="card" style="width: 18rem;">
+        <img src="{{ asset('/storage/posts/'.$post->image) }}" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Card title</h5>
+    <p class="card-text">{!!$post->content!!} </p> <a href="#" class="btn btn-primary">Go somewhere</a>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
+</div>
+</div>
+  
+</div>
     @endforeach
-     @if($posts->hasPages())
-            <div class="card-footer">
-                {{ $posts->links() }}
-            </div>
-            @endif
+    </body>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+
+
+
+{{-- 
+  @if($posts->hasPages())
+  <div class="card-footer">
+    {{ $posts->links() }}
+  </div>
+  @endif --}}
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </body>
+
 </html>

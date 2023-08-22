@@ -24,7 +24,7 @@ class HomeController extends Controller
     {
         {
             //get posts
-            $posts = Post::latest()->paginate(5);
+            $posts = Post::latest()->paginate(3);
     
             //render view with posts
             return view('home', compact('posts'));
